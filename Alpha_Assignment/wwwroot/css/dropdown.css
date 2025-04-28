@@ -1,0 +1,70 @@
+﻿#project-actions-container {
+    position: relative;
+
+    .dropdown {
+        min-width: 250px;
+        width: 100%;
+    }
+}
+
+#account-container {
+    position: relative;
+}
+
+.dropdown {
+    display: none;
+    position: absolute !important;
+    right: 0;
+    top: 110%;
+    background-color: var(--white-100);
+    border: 1px solid var(--white-100);
+    color: var(--dark-400);
+    padding: 0.8rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 5px 2px rgba(148, 148, 148, 0.1);
+    z-index: 10;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 1rem;
+}
+
+.dropdown-show {
+    display: block !important;
+}
+
+.dropdown-body {
+    margin: 0 1rem;
+}
+
+.dropdown-footer {
+    margin: 0 1rem;
+}
+
+
+.squeare-dropdown {
+    display: none;
+    position: absolute;
+    width: 230px;
+    height: auto;
+    left: 30%;
+    background-color: var(--white-100);
+    border: 1px solid var(--white-100);
+    color: var(--dark-400);
+    padding: 0.8rem;
+    border-radius: 16px;
+    box-shadow: 0 0 5px 2px rgba(137, 137, 137, 0.1);
+    z-index: 10;
+}
+
+/*    .dropdown.show {
+        display: block;
+    }*/
+
+.squeare-dropdown-content {
+    display: flex;
+    flex-direction: column;
+}

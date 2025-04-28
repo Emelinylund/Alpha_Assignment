@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<DataClass.Entities.UserEntity> UserManager
+@inject SignInManager<DataClass.Entities.UserEntity> SignInManager
+
+@{
+    var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "Guest";
+}
+
+<div class="dropdown" id="account-dropdown">
+        <div class="dropdown-header">
+            <div class="account-name">
+                <img src="~/images/Avatar-icon.svg" alt="Avatar Portal">
+            <span>@fullName</span>
+            </div>
+        </div>
+        <div class="dropdown-body">
+            <nav class="nav-links">
+            <form method="post" asp-controller="Auth" asp-action="LogOut">
+                <button type="submit" class="nav-link" style="background: none; border: none; padding: 0;">
+                    <i class="fa-duotone fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
+
+            </nav>
+        </div>
+    </div>

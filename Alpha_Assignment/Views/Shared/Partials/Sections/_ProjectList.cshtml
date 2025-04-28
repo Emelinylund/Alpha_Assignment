@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Business.Models.Project>
+
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<section class="project-squeare">
+    @foreach (var project in Model)
+    {
+        <div class="squeare" data-project-id="@project.Id">
+            <div class="squeare-header">
+                <div class="squeare-image">
+                    <img src="@(!string.IsNullOrEmpty(project.Image) ? project.Image : "images/Project-icon.svg")" alt="project">
+                </div>
+                <span class="project-name">@project.ProjectName</span>
+                <span class="client-name">@project.Client.ClientName</span>
+
+                <div id="project-actions-container">
+                    <button id="toggleBtn-@project.Id" type="button" data-type="dropdown" data-target="#project-dropdown-@project.Id" class="btn-actions" title="Open menu">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </button>
+
+                    <div class="dropdown" id="project-dropdown-@project.Id">
+                        <div class="squeare-dropdown-content">
+                            <nav class="nav-links-squeare">
+                                <button data-modal="true" data-target="#editProjectModal" class="nav-link-squeare">
+                                    <i class="fa-duotone fa-solid fa-pen-to-square"></i>
+                                    <span>Edit</span>
+                                </button>
+                            </nav>
+
+                            <div class="or-divider"></div>
+
+                            <nav class="nav-links-squeare">
+                                <a class="nav-link-squeare delete-link" href="#" id="deleteProject-@project.Id" title="Delete Project">
+                                    <i class="fa-solid fa-trash"></i>
+                                    <span>Delete Project</span>
+                                </a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="squeare-body">
+                <p>@project.Description</p>
+            </div>
+        </div>
+    }
+</section>

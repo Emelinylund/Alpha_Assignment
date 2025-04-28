@@ -1,0 +1,42 @@
+﻿@using Alpha_Assignment.ViewModels
+@model ProjectsViewModel
+
+@{
+    
+    ViewData["Title"] = "Projects";
+}
+
+@await Html.PartialAsync("Partials/Sections/_AddProjectModal", Model.AddProjectForm)
+@await Html.PartialAsync("Partials/Sections/_EditProjectModal", Model.EditProjectForm)
+
+
+<div class="main">
+    <h1>Projects</h1>
+    <button type="submit" data-modal="true" data-target="#addProjectModal" class="btn btn-blue btn-main">
+        <i class="fa-solid fa-plus"></i> 
+        <span>Add Project</span>
+    </button>
+    <div class="tabs">
+        <button class="tab active">ALL <span>[0]</span></button>
+        <button class="tab">STARTED <span>[0]</span></button>
+        <button class="tab">COMPLETED <span>[0]</span></button>
+        <div class="underline"></div>
+    </div>
+    <div class="project-container">
+
+        @if (Model.Projects.Any())
+        {
+            @await Html.PartialAsync("Partials/Sections/_ProjectList", Model.Projects)
+
+        }
+        else
+        {
+			<div class="no-projects">
+				<h3>No Projects</h3>
+				<p>Click the button above to add a new project.</p>
+			</div>
+
+		}
+
+    </div>
+</div>
