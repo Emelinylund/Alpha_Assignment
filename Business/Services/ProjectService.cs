@@ -20,6 +20,7 @@ public interface IProjectService
     Task<ProjectResult> UpdateProjectAsync(EditProjectForm form);
     Task<ProjectResult> DeleteProjectAsync(string id);
     Task<IEnumerable<Project>> GetAllProjectsAsync();
+    Task<EditProjectForm> GetProjectByIdAsync(string id);
 }
 
 public class ProjectService(IProjectRepository projectRepository, IStatusService statusService, AppDbContext context) : IProjectService
@@ -43,7 +44,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
             return new ProjectResult { Succeeded = false, StatusCode = 401, Error = "User not logged in." };
         }
 
-        projectEntity.UserId = userId; // <-- viktigt!!
+        projectEntity.UserId = userId; 
 
         var statusResult = await _statusService.GetStatusByIdAsync(formData.Status);
 
@@ -127,40 +128,44 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
     public async Task<IEnumerable<Project>> GetAllProjectsAsync()
     {
-        var entities = await _context.Projects
+        var result = await _context.Projects
             .Include(p => p.Client)
-            .Include(p => p.User)
+            .Include(p => p.User) //chat GPT suggested I should use .Include here
             .Include(p => p.Status)
-            .ToListAsync();
-
-        var result = entities.Select(e => new Project
-        {
-            Id = e.Id,
-            Image = e.Image,
-            ProjectName = e.ProjectName,
-            Description = e.Description,
-            StartDate = e.StartDate,
-            EndDate = e.EndDate,
-            Budget = e.Budget,
-            Client = new Client
+            .Select(e => new Project
             {
-                Id = e.Client.Id,
-                ClientName = e.Client.ClientName
-            },
-            User = new User
-            {
-                Id = e.User.Id,
-                FirstName = e.User.FirstName,
-                LastName = e.User.LastName
-            },
-            Status = new Status
-            {
-                Id = e.Status.Id,
-                StatusName = e.Status.StatusName
-            }
-        });
+                Id = e.Id,
+                Image = e.Image,
+                ProjectName = e.ProjectName,
+                Description = e.Description,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+                Budget = e.Budget,
+                Client = new Client
+                {
+                    Id = e.Client.Id,
+                    ClientName = e.Client.ClientName
+                },
+                User = new User
+                {
+                    Id = e.User.Id,
+                    FirstName = e.User.FirstName,
+                    LastName = e.User.LastName
+                },
+                Status = new Status
+                {
+                    Id = e.Status.Id,
+                    StatusName = e.Status.StatusName
+                }
+            })
+            .ToListAsync(); 
 
         return result;
     }
 
+
+    public Task<EditProjectForm> GetProjectByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
 }

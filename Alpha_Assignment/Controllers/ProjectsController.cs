@@ -95,9 +95,30 @@ public class ProjectsController : Controller
         }
     }
 
+    //[HttpGet("get/{id}")]
+    //public async Task<IActionResult> GetProject(string id)
+    //{
+    //    var project = await _projectService.GetProjectByIdAsync(id);
+    //    if (project == null)
+    //        return NotFound();
+
+    //    return Json(new
+    //    {
+    //        id = project.Id,
+    //        projectName = project.ProjectName,
+    //        description = project.Description,
+    //        startDate = project.StartDate?.ToString("yyyy-MM-dd"),
+    //        endDate = project.EndDate?.ToString("yyyy-MM-dd"),
+    //        status = project.Status,
+            
+    //    });
+    //}
+
     [HttpPost("delete/{id}")]
     public async Task<IActionResult> DeleteProject(string id)
     {
+       
+
         var result = await _projectService.DeleteProjectAsync(id);
 
         if (result.Succeeded)
@@ -109,6 +130,9 @@ public class ProjectsController : Controller
             return BadRequest(new { Success = false, Error = result.Error });
         }
     }
+
+
+   
 
 }
 

@@ -116,6 +116,8 @@ button {
     border: none;
 }
 
+
+
 /* structure*/
 .center-screen {
     display: flex;
@@ -438,6 +440,9 @@ h6 {
     font-size: 18px;
     font-weight: var(--font-semibold);
 }
+
+
+
 
 
 /* links*/
@@ -1000,3 +1005,6 @@ table input[type="checkbox"] {
         background-color: var(--gray-100);
         border-radius: 6px;
     }
+
+
+
