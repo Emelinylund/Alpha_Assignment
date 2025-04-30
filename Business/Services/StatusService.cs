@@ -10,6 +10,7 @@ public interface IStatusService
     Task<StatusResult<Status>> GetStatusByIdAsync(int id);
     Task<StatusResult<Status>> GetStatusByNameAsync(string statusName);
     Task<StatusResult<IEnumerable<Status>>> GetStatusesAsync();
+    Task<dynamic> GetStatusNamesAsync();
 }
 
 public class StatusService(IStatusRepository statusRepository) : IStatusService
@@ -38,6 +39,11 @@ public class StatusService(IStatusRepository statusRepository) : IStatusService
         return result.Succeeded && result.Result != null
            ? new StatusResult<Status> { Succeeded = true, StatusCode = 200, Result = new Status { Id = result.Result.Id, StatusName = result.Result.StatusName } }
            : new StatusResult<Status> { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    }
+
+    public Task<dynamic> GetStatusNamesAsync()
+    {
+        throw new NotImplementedException();
     }
 }
 

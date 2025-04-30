@@ -1,45 +1,46 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using Business.Dtos;
 
 namespace Business.Models;
 
 public class EditProjectForm
 {
+    [Required]
     public string Id { get; set; } = null!;
 
     [DataType(DataType.Upload)]
     public IFormFile? ProjectImage { get; set; }
 
     [Display(Name = "Project Name", Prompt = "Project name")]
-    [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
+    [Required(ErrorMessage = "Required")]
     public string ProjectName { get; set; } = null!;
 
-    [Display(Name = "Client Name", Prompt = "Client name")]
-    [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
-    public string ClientName { get; set; } = null!;
+    [Display(Name = "Client", Prompt = "Choose a client")]
+    [Required(ErrorMessage = "Required")]
+    public string ClientId { get; set; } = null!;
+
+    public IEnumerable<Client> Clients { get; set; } = [];
 
     [Display(Name = "Description", Prompt = "Type something")]
-    [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
+    [Required(ErrorMessage = "Required")]
     public string Description { get; set; } = null!;
 
-    [Display(Name = "Start Date", Prompt = "Enter start date")]
+    [Display(Name = "Start Date")]
     [DataType(DataType.Date)]
     public DateTime? StartDate { get; set; }
 
-    [Display(Name = "End Date", Prompt = "Enter end date")]
+    [Display(Name = "End Date")]
     [DataType(DataType.Date)]
     public DateTime? EndDate { get; set; }
 
-    [Display(Name = "Budget", Prompt = "Enter Budget")]
+    [Display(Name = "Budget")]
     [DataType(DataType.Currency)]
     public decimal? Budget { get; set; }
 
-    [Display(Name = "Status", Prompt = "Enter Status")]
-    [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
-    public string Status { get; set; } = null!;
+    [Display(Name = "Status")]
+    [Required(ErrorMessage = "Required")]
+    public int Status { get; set; }
 
+    public IEnumerable<Status> Statuses { get; set; } = [];
 }

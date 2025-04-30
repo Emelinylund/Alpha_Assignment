@@ -164,8 +164,27 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     }
 
 
-    public Task<EditProjectForm> GetProjectByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
+    //public async Task<EditProjectForm> GetProjectByIdAsync(string id)
+    //{
+    //    var projectEntity = await _context.Projects
+    //        .Include(p => p.Client)
+    //        .Include(p => p.Status)
+    //        .FirstOrDefaultAsync(p => p.Id == id);
+
+    //    if (projectEntity == null)
+    //        return null!;
+
+    //    return new EditProjectForm
+    //    {
+    //        Id = projectEntity.Id,
+    //        ProjectName = projectEntity.ProjectName,
+    //        ClientId = projectEntity.Client.ClientName,
+    //        Description = projectEntity.Description,
+    //        StartDate = projectEntity.StartDate,
+    //        EndDate = projectEntity.EndDate,
+    //        Budget = projectEntity.Budget,
+    //        Status = projectEntity.Status.Id
+    //    };
+    //}
+
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Alpha_Assignment.Controllers
 {
@@ -58,10 +59,17 @@ namespace Alpha_Assignment.Controllers
             if (result.Succeeded)
             {
                 await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("FullName", $"{user.FirstName} {user.LastName}"));
-                // Log in the user after registration
-                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                // Skapa principal med claim, Chat GPT helped me with this
+                var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                var identity = (System.Security.Claims.ClaimsIdentity)principal.Identity!;
+                identity.AddClaim(new System.Security.Claims.Claim("FullName", $"{user.FirstName} {user.LastName}"));
+
+                await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
                 return LocalRedirect("/projects");
             }
+
 
             foreach (var error in result.Errors)
             {
@@ -86,6 +94,7 @@ namespace Alpha_Assignment.Controllers
         }
 
         // Login POST
+        
         [HttpPost]
         public async Task<IActionResult> Login(LoginFormModel formData)
         {
@@ -115,17 +124,21 @@ namespace Alpha_Assignment.Controllers
 
                 if (user != null)
                 {
-                    var existingClaims = await _userManager.GetClaimsAsync(user);
-                    var fullNameClaim = existingClaims.FirstOrDefault(c => c.Type == "FullName");
+                    var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                    var identity = (System.Security.Claims.ClaimsIdentity)principal.Identity!;
 
-                    if (fullNameClaim == null)
+                    // Lägg till FullName-claim, Chat GPT helped me with this
+                    if (!identity.HasClaim(c => c.Type == "FullName"))
                     {
-                        await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("FullName", $"{user.FirstName} {user.LastName}"));
+                        identity.AddClaim(new System.Security.Claims.Claim("FullName", $"{user.FirstName} {user.LastName}"));
                     }
+
+                    await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
                 }
 
                 return LocalRedirect("/projects");
             }
+
 
 
             return BadRequest(new

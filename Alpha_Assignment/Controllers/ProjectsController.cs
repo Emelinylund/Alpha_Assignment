@@ -9,11 +9,13 @@ namespace Alpha_Assignment.Controllers;
 
 
 [Route("Projects")]
+[Authorize]
 public class ProjectsController : Controller
 {
     private readonly IProjectService _projectService;
     private readonly IStatusService _statusService;
     private readonly IClientService _clientService;
+
 
     public ProjectsController(IProjectService projectService, IStatusService statusService, IClientService clientService)
     {
@@ -69,6 +71,21 @@ public class ProjectsController : Controller
         }
     }
 
+
+    //[HttpGet("editmodal/{id}")]
+    //public async Task<IActionResult> GetEditModal(string id)
+    //{
+    //    var form = await _projectService.GetProjectByIdAsync(id);
+    //    if (form == null)
+    //        return NotFound();
+
+    //    ViewBag.Clients = await _clientService.GetClientNamesAsync();    
+    //    ViewBag.Statuses = await _statusService.GetStatusNamesAsync(); 
+
+    //    return PartialView("_EditProjectPartial", form);
+    //}
+
+
     [HttpPost("edit")]
     public async Task<IActionResult> EditProjects(EditProjectForm form)
     {
@@ -95,25 +112,6 @@ public class ProjectsController : Controller
         }
     }
 
-    //[HttpGet("get/{id}")]
-    //public async Task<IActionResult> GetProject(string id)
-    //{
-    //    var project = await _projectService.GetProjectByIdAsync(id);
-    //    if (project == null)
-    //        return NotFound();
-
-    //    return Json(new
-    //    {
-    //        id = project.Id,
-    //        projectName = project.ProjectName,
-    //        description = project.Description,
-    //        startDate = project.StartDate?.ToString("yyyy-MM-dd"),
-    //        endDate = project.EndDate?.ToString("yyyy-MM-dd"),
-    //        status = project.Status,
-            
-    //    });
-    //}
-
     [HttpPost("delete/{id}")]
     public async Task<IActionResult> DeleteProject(string id)
     {
@@ -127,7 +125,7 @@ public class ProjectsController : Controller
         }
         else
         {
-            return BadRequest(new { Success = false, Error = result.Error });
+            return BadRequest(new { Success = false, error = result.Error });
         }
     }
 

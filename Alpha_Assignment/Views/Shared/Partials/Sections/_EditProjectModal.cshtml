@@ -1,108 +1,112 @@
 ﻿@model EditProjectForm
 
 @{
-	Layout = "_CleanLayout";
-	ViewData["Title"] = "Login";
+    Layout = "_CleanLayout";
+    ViewData["Title"] = "Edit Project";
 }
 
-
 <div id="editProjectModal" class="modal">
-	<div class="modal-content">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Project</h3>
+            <button type="button" class="btn-close" data-close="true"></button>
+        </div>
 
-		<div class="modal-header">
-			<h3> Edit Project</h3>
-			<button type="button" class="btn-close" data-close="true"></button>
-		</div>
+        <div class="image-container">
+            <img src="~/images/Project-icon.svg" alt="project-icon" />
+        </div>
 
-		<div class="image-container">
-			<img src="~/images/Project-icon.svg" alt="project-icon" />
+        <form novalidate method="post" asp-action="EditProject" asp-controller="Projects">
+            <input asp-for="Id" type="hidden" />
 
-		</div>
+            <div class="form-group">
+                <label asp-for="ProjectName"></label>
+                <div class="field-group">
+                    <input asp-for="ProjectName" />
+                    <span asp-validation-for="ProjectName"></span>
+                </div>
+            </div>
 
-		<form novalidate method="post" asp-action="EditProjects" asp-controller="Projects">
-			<input asp-for="Id" readonly type="hidden" />
+            <div class="form-group">
+                <label asp-for="ClientId"></label>
+                <div class="field-group">
+                    <select asp-for="ClientId" class="form-control">
+                        <option value="">-- Client --</option>
+                        @foreach (var client in Model.Clients)
+                        {
+                            <option value="@client.Id" selected="@(Model.ClientId == client.Id)">
+                                @client.ClientName
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="ClientId"></span>
+                </div>
+            </div>
 
-			<div class="form-group">
-				<label asp-for="ProjectName"></label>
-				<div class="field-group">
-					<input asp-for="ProjectName" />
-					<span asp-validation-for="ProjectName"></span>
+            <div class="form-group">
+                <label asp-for="Description"></label>
+                <div class="field-group">
+                    <textarea asp-for="Description" placeholder="Type something"></textarea>
+                    <span asp-validation-for="Description"></span>
 
-				</div>
-			</div>
-			<div class="form-group">
-				<label asp-for="ClientName"></label>
-				<div class="field-group">
-					<input asp-for="ClientName" />
-					<span asp-validation-for="ClientName"></span>
+                    <div class="toolbar">
+                        <i class="fa-solid fa-b"></i>
+                        <i class="fa-solid fa-italic"></i>
+                        <i class="fa-solid fa-underline"></i>
+                        <i class="fa-solid fa-align-left"></i>
+                        <i class="fa-solid fa-align-center"></i>
+                        <i class="fa-solid fa-align-right"></i>
+                        <i class="fa-solid fa-list"></i>
+                        <i class="fa-solid fa-list-ol"></i>
+                        <i class="fa-solid fa-link"></i>
+                    </div>
+                </div>
+            </div>
 
-				</div>
-			</div>
+            <div class="form-horizontal-group">
+                <div class="form-group">
+                    <label asp-for="StartDate"></label>
+                    <div class="field-group">
+                        <input asp-for="StartDate" />
+                        <span asp-validation-for="StartDate"></span>
+                    </div>
+                </div>
 
-			<div class="form-group">
-				<label asp-for="Description"></label>
-				<div class="field-group">
-					
-					<textarea asp-for="Description" placeholder="Type something"></textarea>
-					<span asp-validation-for="Description"></span>
+                <div class="form-group">
+                    <label asp-for="EndDate"></label>
+                    <div class="field-group">
+                        <input asp-for="EndDate" />
+                        <span asp-validation-for="EndDate"></span>
+                    </div>
+                </div>
+            </div>
 
-					<div class="toolbar">
-						<i class="fa-solid fa-b"></i>
-						<i class="fa-solid fa-italic"></i>
-						<i class="fa-solid fa-underline"></i>
-						<i class="fa-solid fa-align-left"></i>
-						<i class="fa-solid fa-align-center"></i>
-						<i class="fa-solid fa-align-right"></i>
-						<i class="fa-solid fa-list"></i>
-						<i class="fa-solid fa-list-ol"></i>
-						<i class="fa-solid fa-link"></i>
-					</div>
-				</div>
-			</div>
+            <div class="form-group">
+                <label asp-for="Budget"></label>
+                <div class="field-group" style="position: relative;">
+                    <i class="fa-solid fa-dollar-sign" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"></i>
+                    <input asp-for="Budget" style="padding-left: 25px;" />
+                    <span asp-validation-for="Budget"></span>
+                </div>
+            </div>
 
-			<div class="form-horizontal-group">
-			<div class="form-group">
-				<label asp-for="StartDate"></label>
-				<div class="field-group">
-					<input asp-for="StartDate" />
-					<span asp-validation-for="StartDate"></span>
+            <div class="form-group">
+                <label asp-for="Status"></label>
+                <div class="field-group">
+                    <select asp-for="Status" class="form-control">
+                        <option value="">-- Välj status --</option>
+                        @foreach (var status in Model.Statuses)
+                        {
+                            <option value="@status.Id" selected="@(Model.Status == status.Id)">
+                                @status.Id
+                            </option>
+                        }
+                    </select>
+                    <span asp-validation-for="Status"></span>
+                </div>
+            </div>
 
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label asp-for="EndDate"></label>
-				<div class="field-group">
-					<input asp-for="EndDate" />
-					<span asp-validation-for="EndDate"></span>
-
-				</div>
-			</div>
-			</div>
-			<div class="form-group">
-				<label asp-for="Budget"></label>
-				<div class="field-group" style="position: relative;">
-					<i class="fa-solid fa-dollar-sign" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);"></i>
-					<input asp-for="Budget" style="padding-left: 25px;" />
-					<span asp-validation-for="Budget"></span>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label asp-for="Status"></label>
-				<div class="field-group">
-					<select asp-for="Status" class="form-control">
-						<option value="">-- Välj status --</option>
-						<option value="Started">Started</option>
-						<option value="Completed">Completed</option>
-					</select>
-					<span asp-validation-for="Status" class="text-danger"></span>
-				</div>
-			</div>
-
-			<button type="submit" class="btn btn-submit btn-blue">Create</button>
-		</form>
-
-	</div>
-
+            <button type="submit" class="btn btn-submit btn-blue">Spara</button>
+        </form>
+    </div>
 </div>

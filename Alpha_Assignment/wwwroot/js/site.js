@@ -1,5 +1,66 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
 
+    //Registration
+   
+    const forms = document.querySelectorAll('form');
+
+    forms.forEach(form => {
+        
+        if (form.dataset.listenerAdded === 'true') return;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            clearErrorMessages(form);
+
+            const formData = new FormData(form);
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'post',
+                    body: formData
+                });
+
+                if (res.ok) {
+                    const modal = form.closest('.modal');
+                    if (modal)
+                        modal.style.display = 'none';
+
+                    window.location.href = '/projects';
+                }
+
+                else if (res.status === 400) {
+                    const data = await res.json();
+
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(key => {
+                            const input = form.querySelector(`[name="${key}"]`);
+                            if (input) {
+                                input.classList.add('input-validation-error');
+                            }
+
+                            const span = form.querySelector(`[data-valmsg-for="${key}"]`);
+                            if (span) {
+                                span.innerText = data.errors[key].join('\n');
+                                span.classList.add('field-validation-error');
+                            }
+                        });
+                    }
+                }
+            }
+            catch {
+                console.log('error submitting the form');
+            }
+
+        });
+
+       
+        form.dataset.listenerAdded = 'true';
+    });
+
+
+
+
     // Open modal
     const modalButtons = document.querySelectorAll('[data-modal="true"]');
     modalButtons.forEach(button => {
@@ -12,29 +73,32 @@
         });
     });
 
-    document.querySelectorAll('[data-modal="true"][data-target="#editProjectModal"]').forEach(button => {
-        button.addEventListener('click', async () => {
-            const projectId = button.id.replace('toggleBtn-', '');
+    //// Get projects to edit 
+    //document.querySelectorAll('[data-modal="true"][data-target="#editProjectModal"]').forEach(button => {
+    //    button.addEventListener('click', async () => {
+    //        const projectId = button.id.replace('toggleBtn-', '');
 
-            try {
-                const response = await fetch(`/Projects/get/${projectId}`);
-                const data = await response.json();
+    //        try {
+    //            const response = await fetch(`/Projects/get/${projectId}`);
+    //            const data = await response.json();
 
-                if (data) {
-                    const form = document.querySelector('#editProjectModal form');
-                    form.querySelector('input[name="Id"]').value = data.id;
-                    form.querySelector('input[name="ProjectName"]').value = data.projectName;
-                    form.querySelector('textarea[name="Description"]').value = data.description || '';
-                    form.querySelector('input[name="StartDate"]').value = data.startDate;
-                    form.querySelector('input[name="EndDate"]').value = data.endDate || '';
-                    form.querySelector('select[name="Status"]').value = data.status;
-                    form.querySelector('select[name="ClientId"]').value = data.clientId;
-                }
-            } catch (error) {
-                console.error('Error fetching project data:', error);
-            }
-        });
-    });
+    //            if (data) {
+    //                const form = document.querySelector('#editProjectModal form');
+    //                form.querySelector('input[name="Id"]').value = data.id;
+    //                form.querySelector('input[name="ProjectName"]').value = data.projectName;
+    //                form.querySelector('textarea[name="Description"]').value = data.description || '';
+    //                form.querySelector('input[name="StartDate"]').value = data.startDate?.split('T')[0] || '';
+    //                form.querySelector('input[name="EndDate"]').value = data.endDate?.split('T')[0] || '';
+    //                form.querySelector('input[name="Budget"]').value = data.budget || '';
+    //                form.querySelector('select[name="ClientId"]').value = data.clientId;
+    //                form.querySelector('select[name="Status"]').value = data.status;
+    //            }
+    //        } catch (error) {
+    //            console.error('Error fetching project data:', error);
+    //        }
+    //    });
+    //});
+
 
     // Close modal
     const closeButtons = document.querySelectorAll('[data-close="true"]');
@@ -107,49 +171,38 @@
     });
 
 
-    // Ta bort projektet
-    document.querySelectorAll('.delete-link').forEach(button => {
-        button.addEventListener('click', async function () {
-            const projectId = this.getAttribute('id').replace('deleteProject-', '');
-
-            const confirmDelete = confirm('Are you sure you want to delete this project?');
-            if (!confirmDelete) return;
-
-            try {
-                const response = await fetch(`/Projects/delete/${projectId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.Success) {
-                    console.log(1)
-                }
-
-                if (data.Success) {
-
-                    window.location.reload();
-                    return;
-                    
-                } else {
-                    alert('Error deleting project: ' + (data.Error || 'Unknown error'));
-                    return;
-                }
-            } catch (error) {
-                console.error('Error deleting project:', error);
-                alert('An unexpected error occurred.');
-            }
-        });
-    });
+    
 
 
 }); 
 
 
+async function deleteProject(projectId) {
 
+    if (!confirm('Are you sure you want to delete this project?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/Projects/delete/${projectId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert('Error deleting project: ' + (data.error || 'Unknown error'));
+        }
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        alert('An unexpected error occurred.');
+    }
+
+}
 
 
 // Hjälp

@@ -7,6 +7,7 @@ namespace Business.Services;
 
 public interface IClientService
 {
+    Task<dynamic> GetClientNamesAsync();
     Task<ClientResult> GetClientsAsync();
 }
 
@@ -14,6 +15,11 @@ public interface IClientService
 public class ClientService(IClientRepository clientRepository) : IClientService
 {
     private readonly IClientRepository _clientRepository = clientRepository;
+
+    public Task<dynamic> GetClientNamesAsync()
+    {
+        throw new NotImplementedException();
+    }
 
     public async Task<ClientResult> GetClientsAsync()
     {
