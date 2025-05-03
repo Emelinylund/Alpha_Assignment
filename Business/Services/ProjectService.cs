@@ -39,7 +39,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
         var projectEntity = formData.MapTo<ProjectEntity>();
 
-        // Hämta inloggad användare
+       
         var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
         {
@@ -138,12 +138,12 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         if (existingProject == null)
             return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{form.Id}' was not found." };
 
-        // Hämta status för att säkerställa att den finns
+       
         var statusResult = await _statusService.GetStatusByIdAsync(form.StatusId);
         if (!statusResult.Succeeded || statusResult.Result == null)
             return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Invalid status" };
 
-        // Uppdatera projektets fält
+        
         existingProject.ProjectName = form.ProjectName;
         existingProject.ClientId = form.ClientId;
         existingProject.Description = form.Description;
@@ -152,8 +152,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         existingProject.Budget = form.Budget;
         existingProject.StatusId = statusResult.Result.Id;
 
-        // Klient och användare uppdateras inte eftersom de är låsta i formuläret
-        // existingProject.ClientId = form.ClientId;
+       
 
         _context.Projects.Update(existingProject);
         await _context.SaveChangesAsync();
@@ -172,7 +171,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
         var projectEntity = projectResult.Result;
 
-        // Fetch clients and statuses to pass as arguments to MapToEditForm  
+       
         var clients = await _context.Clients.ToListAsync();
         var statuses = await _context.Statuses.ToListAsync();
 

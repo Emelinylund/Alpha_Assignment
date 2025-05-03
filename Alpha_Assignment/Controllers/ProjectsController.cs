@@ -93,7 +93,7 @@ public class ProjectsController : Controller
     {
         if (!ModelState.IsValid)
         {
-            // Om modellen inte är giltig, visa samma formulär igen
+           
             return View(form);
         }
 

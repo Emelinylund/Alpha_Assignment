@@ -176,11 +176,11 @@
         tab.addEventListener('click', () => {
             const selectedStatus = tab.getAttribute('data-status').toLowerCase();
 
-            // Byt aktiv klass
+            
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
 
-            // Filtrera projekt
+          
             document.querySelectorAll('[data-project-id]').forEach(project => {
                 const status = project.getAttribute('data-status')?.toLowerCase();
 
@@ -193,7 +193,7 @@
         });
     });
 
-    // Visa "ALL" som standard när sidan laddas
+   
     document.querySelector('.tab[data-status="ALL"]').click();
 
 
@@ -268,7 +268,7 @@ async function deleteProject(projectId) {
 }
 
 
-// Hjälp
+
 function clearErrorMessages(form) {
     form.querySelectorAll('[data-val="true"]').forEach(input => {
         input.classList.remove('input-validation-error');
