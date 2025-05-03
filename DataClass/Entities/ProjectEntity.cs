@@ -10,7 +10,7 @@ public class ProjectEntity
     public string? Image { get; set; }
     public string ProjectName { get; set; } = null!;
 
-    public string? Description { get; set; }
+    public string Description { get; set; } = null!;
 
     [Column(TypeName = "Date")]
     public DateTime StartDate { get; set; }

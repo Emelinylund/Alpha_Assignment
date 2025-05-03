@@ -1,14 +1,10 @@
 ﻿@model EditProjectForm
 
-@{
-    Layout = "_CleanLayout";
-    ViewData["Title"] = "Edit Project";
-}
-
 <div id="editProjectModal" class="modal">
     <div class="modal-content">
+
         <div class="modal-header">
-            <h3>Edit Project</h3>
+            <h3>Edit project</h3>
             <button type="button" class="btn-close" data-close="true"></button>
         </div>
 
@@ -28,18 +24,10 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="ClientId"></label>
+                <label>Client</label>
                 <div class="field-group">
-                    <select asp-for="ClientId" class="form-control">
-                        <option value="">-- Client --</option>
-                        @foreach (var client in Model.Clients)
-                        {
-                            <option value="@client.Id" selected="@(Model.ClientId == client.Id)">
-                                @client.ClientName
-                            </option>
-                        }
-                    </select>
-                    <span asp-validation-for="ClientId"></span>
+                    <input type="text" value="@Model.ClientId" class="form-control"/>
+                    <input type="hidden" asp-for="ClientId" />
                 </div>
             </div>
 
@@ -91,22 +79,25 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Status"></label>
+                <label asp-for="StatusId"></label>
                 <div class="field-group">
-                    <select asp-for="Status" class="form-control">
+                    <select asp-for="StatusId" class="form-control">
+
+
                         <option value="">-- Välj status --</option>
+
                         @foreach (var status in Model.Statuses)
                         {
-                            <option value="@status.Id" selected="@(Model.Status == status.Id)">
-                                @status.Id
-                            </option>
+                            <option value="@status.Id">@status.StatusName</option>
                         }
+
+
                     </select>
-                    <span asp-validation-for="Status"></span>
+                    <span asp-validation-for="StatusId"></span>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-submit btn-blue">Spara</button>
+            <button type="submit" class="btn btn-submit btn-blue">Update</button>
         </form>
     </div>
 </div>

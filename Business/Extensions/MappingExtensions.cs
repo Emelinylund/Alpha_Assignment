@@ -43,9 +43,27 @@ public static class ProjectMapperExtensions
             EndDate = form.EndDate,
             Budget = form.Budget ?? 0,
             ClientId = form.ClientId.ToString(),
-            StatusId = form.Status,
+            StatusId = form.StatusId,
             Created = DateTime.Now,
             // Här kan du hantera filuppladdning om det behövs också
         };
     }
+
+    public static EditProjectForm MapToEditForm(this ProjectEntity entity, IEnumerable<Client> clients, IEnumerable<Status> statuses)
+    {
+        return new EditProjectForm
+        {
+            Id = entity.Id,
+            ProjectName = entity.ProjectName,
+            Description = entity.Description,
+            StartDate = entity.StartDate,
+            EndDate = entity.EndDate,
+            Budget = entity.Budget,
+            ClientId = entity.ClientId,
+            StatusId = entity.StatusId,
+            Clients = clients,
+            Statuses = statuses
+        };
+    }
+
 }

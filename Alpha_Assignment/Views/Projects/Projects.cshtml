@@ -2,41 +2,85 @@
 @model ProjectsViewModel
 
 @{
-    
     ViewData["Title"] = "Projects";
+
+    var allProjects = Model.Projects;
+    var startedCount = allProjects.Count(p => p.Status?.StatusName == "Started");
+    var completedCount = allProjects.Count(p => p.Status?.StatusName == "Completed");
 }
 
 @await Html.PartialAsync("Partials/Sections/_AddProjectModal", Model.AddProjectForm)
 @await Html.PartialAsync("Partials/Sections/_EditProjectModal", Model.EditProjectForm)
 
-
 <div class="main">
     <h1>Projects</h1>
+
     <button type="submit" data-modal="true" data-target="#addProjectModal" class="btn btn-blue btn-main">
-        <i class="fa-solid fa-plus"></i> 
+        <i class="fa-solid fa-plus"></i>
         <span>Add Project</span>
     </button>
+
     <div class="tabs">
-        <button class="tab active" data-status="ALL">ALL <span>[0]</span></button>
-        <button class="tab" data-status="Started">STARTED <span>[0]</span></button>
-        <button class="tab" data-status="Completed">COMPLETED <span>[0]</span></button>
+        <button class="tab active" data-status="ALL">ALL <span>[@allProjects.Count()]</span></button>
+        <button class="tab" data-status="Started">STARTED <span>[@startedCount]</span></button>
+        <button class="tab" data-status="Completed">COMPLETED <span>[@completedCount]</span></button>
         <div class="underline"></div>
     </div>
+
     <div class="project-container">
-
-        @if (Model.Projects.Any())
+        @if (allProjects.Any())
         {
-            @await Html.PartialAsync("Partials/Sections/_ProjectList", Model.Projects)
+            <section class="project-squeare">
+                @foreach (var project in allProjects)
+                {
+                    <div class="squeare" data-project-id="@project.Id" data-status="@project.Status?.StatusName">
+                        <div class="squeare-header">
+                            <div class="squeare-image">
+                                <img src="@(!string.IsNullOrEmpty(project.Image) ? project.Image : "images/Project-icon.svg")" alt="project">
+                            </div>
+                            <span class="project-name">@project.ProjectName</span>
+                            <span class="client-name">@project.Client.ClientName</span>
 
+                            <div id="project-actions-container">
+                                <button id="toggleBtn-@project.Id" type="button" data-type="dropdown" data-target="#project-dropdown-@project.Id" class="btn-actions" title="Open menu">
+                                    <i class="fa-solid fa-ellipsis"></i>
+                                </button>
+
+                                <div class="dropdown" id="project-dropdown-@project.Id">
+                                    <div class="squeare-dropdown-content">
+                                        <nav class="nav-links-squeare">
+                                            <button data-modal="true" data-target="#editProjectModal" class="nav-link-squeare edit-button" data-id="@project.Id">
+                                                <i class="fa-duotone fa-solid fa-pen-to-square"></i>
+                                                <span>Edit</span>
+                                            </button>
+                                        </nav>
+
+                                        <div class="or-divider"></div>
+
+                                        <nav class="nav-links-squeare">
+                                            <button type="button" class="nav-link-squeare delete-link" onclick="deleteProject('@project.Id')" title="Delete Project">
+                                                <i class="fa-solid fa-trash"></i>
+                                                <span>Delete Project</span>
+                                            </button>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="squeare-body">
+                            <p>@project.Description</p>
+                        </div>
+                    </div>
+                }
+            </section>
         }
         else
         {
-			<div class="no-projects">
-				<h3>No Projects</h3>
-				<p>Click the button above to add a new project.</p>
-			</div>
-
-		}
-
+            <div class="no-projects">
+                <h3>No Projects</h3>
+                <p>Click the button above to add a new project.</p>
+            </div>
+        }
     </div>
 </div>
+

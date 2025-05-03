@@ -7,7 +7,7 @@
 <section class="project-squeare">
     @foreach (var project in Model)
     {
-        <div class="squeare" data-project-id="@project.Id">
+        <div class="squeare" data-project-id="@project.Id" data-status="@project.Status?.StatusName">
             <div class="squeare-header">
                 <div class="squeare-image">
                     <img src="@(!string.IsNullOrEmpty(project.Image) ? project.Image : "images/Project-icon.svg")" alt="project">
@@ -23,7 +23,7 @@
                     <div class="dropdown" id="project-dropdown-@project.Id">
                         <div class="squeare-dropdown-content">
                             <nav class="nav-links-squeare">
-                                <button data-modal="true" data-target="#editProjectModal" class="nav-link-squeare">
+                                <button data-modal="true" data-target="#editProjectModal" class="nav-link-squeare edit-button" data-id="@project.Id">
                                     <i class="fa-duotone fa-solid fa-pen-to-square"></i>
                                     <span>Edit</span>
                                 </button>

@@ -9,11 +9,11 @@
         if (form.dataset.listenerAdded === 'true') return;
 
         form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault()
 
-            clearErrorMessages(form);
+            clearErrorMessages(form)
 
-            const formData = new FormData(form);
+            const formData = new FormData(form)
 
             try {
                 const res = await fetch(form.action, {
@@ -73,31 +73,89 @@
         });
     });
 
-    //// Get projects to edit 
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("button[data-modal='true']").forEach(button => {
+            button.addEventListener("click", async function () {
+                const projectCard = button.closest(".squeare");
+                const projectId = projectCard.getAttribute("data-project-id");
+
+                try {
+                    const response = await fetch(`/Projects/editmodal/${projectId}`);
+
+                    if (!response.ok) {
+                        throw new Error("Kunde inte ladda editformuläret. Status: " + response.status);
+                    }
+
+                    const html = await response.text();
+
+                   
+                    const modalContainer = document.getElementById("editProjectModal");
+                    modalContainer.innerHTML = html;
+
+                  
+                    const form = modalContainer.querySelector('form');
+                    const projectData = JSON.parse(form.dataset.projectData); 
+
+                    form.querySelector('[name="ProjectName"]').value = projectData.ProjectName;
+                    form.querySelector('[name="ClientId"]').value = projectData.ClientId;
+                    form.querySelector('[name="Description"]').value = projectData.Description;
+                    form.querySelector('[name="StartDate"]').value = projectData.StartDate;
+                    form.querySelector('[name="EndDate"]').value = projectData.EndDate;
+                    form.querySelector('[name="Budget"]').value = projectData.Budget;
+                    form.querySelector('[name="Status"]').value = projectData.Status;
+
+                   
+                    modalContainer.classList.add("show");
+                    modalContainer.style.display = "block";
+
+                    
+                    modalContainer.querySelector("[data-close]").addEventListener("click", () => {
+                        modalContainer.classList.remove("show");
+                        modalContainer.style.display = "none";
+                    });
+
+                } catch (err) {
+                    console.error("Fel vid hämtning av edit-modal:", err);
+                }
+            });
+        });
+    });
+
+    
+
+
+
+
+
+
+
+
+
+    ///* Get projects to edit*/
     //document.querySelectorAll('[data-modal="true"][data-target="#editProjectModal"]').forEach(button => {
     //    button.addEventListener('click', async () => {
     //        const projectId = button.id.replace('toggleBtn-', '');
 
     //        try {
-    //            const response = await fetch(`/Projects/get/${projectId}`);
-    //            const data = await response.json();
-
-    //            if (data) {
-    //                const form = document.querySelector('#editProjectModal form');
-    //                form.querySelector('input[name="Id"]').value = data.id;
-    //                form.querySelector('input[name="ProjectName"]').value = data.projectName;
-    //                form.querySelector('textarea[name="Description"]').value = data.description || '';
-    //                form.querySelector('input[name="StartDate"]').value = data.startDate?.split('T')[0] || '';
-    //                form.querySelector('input[name="EndDate"]').value = data.endDate?.split('T')[0] || '';
-    //                form.querySelector('input[name="Budget"]').value = data.budget || '';
-    //                form.querySelector('select[name="ClientId"]').value = data.clientId;
-    //                form.querySelector('select[name="Status"]').value = data.status;
-    //            }
+    //            const response = await fetch(`/Projects/editprojectform/${projectId}`);
+    //            const html = await response.text();
+                
+    //            document.querySelector('#editProjectModal .modal-content').innerHTML = html;
     //        } catch (error) {
     //            console.error('Error fetching project data:', error);
     //        }
     //    });
     //});
+
+
+
+
+
+
+
+
+
 
 
     // Close modal
@@ -116,7 +174,7 @@
 
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', () => {
-            const selectedStatus = tab.getAttribute('data-status');
+            const selectedStatus = tab.getAttribute('data-status').toLowerCase();
 
             // Byt aktiv klass
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -124,9 +182,9 @@
 
             // Filtrera projekt
             document.querySelectorAll('[data-project-id]').forEach(project => {
-                const status = project.getAttribute('data-status');
+                const status = project.getAttribute('data-status')?.toLowerCase();
 
-                if (selectedStatus === "ALL" || status === selectedStatus) {
+                if (selectedStatus === "all" || status === selectedStatus) {
                     project.style.display = 'block';
                 } else {
                     project.style.display = 'none';
@@ -134,6 +192,10 @@
             });
         });
     });
+
+    // Visa "ALL" som standard när sidan laddas
+    document.querySelector('.tab[data-status="ALL"]').click();
+
 
 
 
@@ -176,6 +238,7 @@
 
 }); 
 
+//Delete projects
 
 async function deleteProject(projectId) {
 

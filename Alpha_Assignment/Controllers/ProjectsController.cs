@@ -72,45 +72,43 @@ public class ProjectsController : Controller
     }
 
 
-    //[HttpGet("editmodal/{id}")]
-    //public async Task<IActionResult> GetEditModal(string id)
-    //{
-    //    var form = await _projectService.GetProjectByIdAsync(id);
-    //    if (form == null)
-    //        return NotFound();
+  
 
-    //    ViewBag.Clients = await _clientService.GetClientNamesAsync();    
-    //    ViewBag.Statuses = await _statusService.GetStatusNamesAsync(); 
+    [HttpGet("edit-modal/{id}")]
+    public async Task<IActionResult> EditModal(string id)
+    {
+        var form = await _projectService.GetProjectByIdAsync(id);
+        if (form == null) return NotFound();
 
-    //    return PartialView("_EditProjectPartial", form);
-    //}
+        return PartialView("_EditProjectModal", form);
+    }
+
+
 
 
     [HttpPost("edit")]
-    public async Task<IActionResult> EditProjects(EditProjectForm form)
+    public async Task<IActionResult> Edit(EditProjectForm form)
+
+        
     {
         if (!ModelState.IsValid)
         {
-            var errors = ModelState
-                .Where(x => x.Value?.Errors.Count > 0)
-                .ToDictionary(
-                    kvp => kvp.Key,
-                    kvp => kvp.Value?.Errors.Select(x => x.ErrorMessage).ToArray()
-                );
-            return BadRequest(new { success = false, errors });
+            // Om modellen inte är giltig, visa samma formulär igen
+            return View(form);
         }
 
         var result = await _projectService.UpdateProjectAsync(form);
-
         if (result.Succeeded)
         {
-            return Ok(new { Success = true });
+            return RedirectToAction("Projects");
         }
-        else
-        {
-            return Problem("Unable to submit data");
-        }
+
+        ModelState.AddModelError("", "Something went wrong.");
+        return View(form);
     }
+
+
+
 
     [HttpPost("delete/{id}")]
     public async Task<IActionResult> DeleteProject(string id)

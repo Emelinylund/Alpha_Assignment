@@ -21,6 +21,7 @@ public interface IProjectService
     Task<ProjectResult> DeleteProjectAsync(string id);
     Task<IEnumerable<Project>> GetAllProjectsAsync();
     Task<EditProjectForm> GetProjectByIdAsync(string id);
+   
 }
 
 public class ProjectService(IProjectRepository projectRepository, IStatusService statusService, AppDbContext context) : IProjectService
@@ -29,6 +30,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
     private readonly IStatusService _statusService = statusService;
     private readonly AppDbContext _context = context;
     private readonly IHttpContextAccessor _httpContextAccessor = new HttpContextAccessor();
+    private object? clientRepository;
 
     public async Task<ProjectResult> CreateProjectAsync(AddProjectForm formData)
     {
@@ -46,7 +48,7 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
         projectEntity.UserId = userId; 
 
-        var statusResult = await _statusService.GetStatusByIdAsync(formData.Status);
+        var statusResult = await _statusService.GetStatusByIdAsync(formData.StatusId);
 
         if (!statusResult.Succeeded || statusResult.Result == null)
         {
@@ -66,19 +68,11 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
 
 
 
-    public async Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
-    {
-        var response = await _projectRepository.GetAllAsync();
-
-        return response.MapTo<ProjectResult<IEnumerable<Project>>>();
-
-
-
-    }
+   
 
     public async Task<ProjectResult<Project>> GetProjectAsync(string id)
     {
-        var response = await _projectRepository.GetAsync(x => x.Id == id);
+        var response = await _projectRepository.GetByIdAsync(id);
 
         if (response.Succeeded && response.Result != null)
         {
@@ -95,42 +89,11 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
         }
     }
 
-    public async Task<ProjectResult> UpdateProjectAsync(EditProjectForm form)
-    {
-        if (form == null)
-            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required fields are supplied." };
-
-        var projectEntity = form.MapTo<ProjectEntity>();
-
-        var result = await _projectRepository.UpdateAsync(projectEntity);
-
-        return result.Succeeded
-            ? new ProjectResult { Succeeded = true, StatusCode = 200 }
-            : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
-    }
-
-    public async Task<ProjectResult> DeleteProjectAsync(string id)
-    {
-        if (string.IsNullOrEmpty(id))
-            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Project ID is required." };
-
-        var projectEntity = await _projectRepository.GetAsync(x => x.Id == id);
-
-        if (!projectEntity.Succeeded || projectEntity.Result == null)
-            return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{id}' was not found." };
-
-        var result = await _projectRepository.DeleteAsync(projectEntity.Result);
-
-        return result.Succeeded
-            ? new ProjectResult { Succeeded = true, StatusCode = 200 }
-            : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
-    }
-
     public async Task<IEnumerable<Project>> GetAllProjectsAsync()
     {
         var result = await _context.Projects
             .Include(p => p.Client)
-            .Include(p => p.User) //chat GPT suggested I should use .Include here
+            .Include(p => p.User) // Chat GPT suggested I should use .Include here
             .Include(p => p.Status)
             .Select(e => new Project
             {
@@ -158,33 +121,86 @@ public class ProjectService(IProjectRepository projectRepository, IStatusService
                     StatusName = e.Status.StatusName
                 }
             })
-            .ToListAsync(); 
+            .ToListAsync();
 
         return result;
     }
 
 
-    //public async Task<EditProjectForm> GetProjectByIdAsync(string id)
-    //{
-    //    var projectEntity = await _context.Projects
-    //        .Include(p => p.Client)
-    //        .Include(p => p.Status)
-    //        .FirstOrDefaultAsync(p => p.Id == id);
 
-    //    if (projectEntity == null)
-    //        return null!;
 
-    //    return new EditProjectForm
-    //    {
-    //        Id = projectEntity.Id,
-    //        ProjectName = projectEntity.ProjectName,
-    //        ClientId = projectEntity.Client.ClientName,
-    //        Description = projectEntity.Description,
-    //        StartDate = projectEntity.StartDate,
-    //        EndDate = projectEntity.EndDate,
-    //        Budget = projectEntity.Budget,
-    //        Status = projectEntity.Status.Id
-    //    };
-    //}
+    public async Task<ProjectResult> UpdateProjectAsync(EditProjectForm form)
+    {
+        if (form == null)
+            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Not all required fields are supplied." };
 
+        var existingProject = await _context.Projects.FirstOrDefaultAsync(p => p.Id == form.Id);
+        if (existingProject == null)
+            return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{form.Id}' was not found." };
+
+        // Hämta status för att säkerställa att den finns
+        var statusResult = await _statusService.GetStatusByIdAsync(form.StatusId);
+        if (!statusResult.Succeeded || statusResult.Result == null)
+            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Invalid status" };
+
+        // Uppdatera projektets fält
+        existingProject.ProjectName = form.ProjectName;
+        existingProject.ClientId = form.ClientId;
+        existingProject.Description = form.Description;
+        existingProject.StartDate = (DateTime)form.StartDate!;
+        existingProject.EndDate = form.EndDate;
+        existingProject.Budget = form.Budget;
+        existingProject.StatusId = statusResult.Result.Id;
+
+        // Klient och användare uppdateras inte eftersom de är låsta i formuläret
+        // existingProject.ClientId = form.ClientId;
+
+        _context.Projects.Update(existingProject);
+        await _context.SaveChangesAsync();
+
+        return new ProjectResult { Succeeded = true, StatusCode = 200 };
+    }
+
+  
+
+    public async Task<EditProjectForm> GetProjectByIdAsync(string id)
+    {
+        var projectResult = await _projectRepository.GetAsync(p => p.Id == id);
+
+        if (!projectResult.Succeeded || projectResult.Result == null)
+            return null!;
+
+        var projectEntity = projectResult.Result;
+
+        // Fetch clients and statuses to pass as arguments to MapToEditForm  
+        var clients = await _context.Clients.ToListAsync();
+        var statuses = await _context.Statuses.ToListAsync();
+
+        return projectEntity.MapToEditForm((IEnumerable<Client>)clients, (IEnumerable<Status>)statuses);
+    }
+
+
+
+
+    public async Task<ProjectResult> DeleteProjectAsync(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+            return new ProjectResult { Succeeded = false, StatusCode = 400, Error = "Project ID is required." };
+
+        var projectEntity = await _projectRepository.GetAsync(x => x.Id == id);
+
+        if (!projectEntity.Succeeded || projectEntity.Result == null)
+            return new ProjectResult { Succeeded = false, StatusCode = 404, Error = $"Project '{id}' was not found." };
+
+        var result = await _projectRepository.DeleteAsync(projectEntity.Result);
+
+        return result.Succeeded
+            ? new ProjectResult { Succeeded = true, StatusCode = 200 }
+            : new ProjectResult { Succeeded = false, StatusCode = result.StatusCode, Error = result.Error };
+    }
+
+    public Task<ProjectResult<IEnumerable<Project>>> GetProjectsAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

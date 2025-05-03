@@ -11,4 +11,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public virtual required DbSet<StatusEntity> Statuses { get; set; }
 
     public virtual required DbSet<ProjectEntity> Projects { get; set; }
+
+   
 }

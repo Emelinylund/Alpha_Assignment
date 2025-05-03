@@ -1,3 +1,4 @@
+using Alpha_Assignment.ViewModels;
 using Business.Services;
 using DataClass.Contexts;
 using DataClass.Entities;
@@ -42,7 +43,7 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<ProjectsViewModel>();
 
 
 var app = builder.Build();

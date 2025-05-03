@@ -29,7 +29,7 @@
 					<select asp-for="ClientId" class="form-control">
 
 
-						<option value="">-- Client --</option>
+						<option value="">-- Select a Client --</option>
 
 						@foreach (var client in Model.Clients)
 						{
@@ -95,9 +95,9 @@
 			</div>
 
 			<div class="form-group">
-				<label asp-for="Status"></label>
+				<label asp-for="StatusId"></label>
 				<div class="field-group">
-					<select asp-for="Status" class="form-control">
+					<select asp-for="StatusId" class="form-control">
 
 
 						<option value="">-- Välj status --</option>
@@ -105,11 +105,11 @@
 						@foreach (var status in Model.Statuses)
 						{
 							<option value="@status.Id">@status.StatusName</option>
-						})
+						}
 
 						
 					</select>
-					<span asp-validation-for="Status" class="text-danger"></span>
+					<span asp-validation-for="StatusId" class="text-danger"></span>
 				</div>
 			</div>
 

@@ -1,28 +1,28 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Business.Dtos;
+
 
 namespace Business.Models;
 
 public class EditProjectForm
 {
     [Required]
-    public string Id { get; set; } = null!;
+    public string Id { get; set; }
 
     [DataType(DataType.Upload)]
     public IFormFile? ProjectImage { get; set; }
 
-    [Display(Name = "Project Name", Prompt = "Project name")]
+    [Display(Name = "Project Name")]
     [Required(ErrorMessage = "Required")]
     public string ProjectName { get; set; } = null!;
 
-    [Display(Name = "Client", Prompt = "Choose a client")]
+    [Display(Name = "Client Name")]
     [Required(ErrorMessage = "Required")]
     public string ClientId { get; set; } = null!;
 
     public IEnumerable<Client> Clients { get; set; } = [];
 
-    [Display(Name = "Description", Prompt = "Type something")]
+    [Display(Name = "Description")]
     [Required(ErrorMessage = "Required")]
     public string Description { get; set; } = null!;
 
@@ -39,8 +39,9 @@ public class EditProjectForm
     public decimal? Budget { get; set; }
 
     [Display(Name = "Status")]
+    [DataType(DataType.Text)]
     [Required(ErrorMessage = "Required")]
-    public int Status { get; set; }
+    public int StatusId { get; set; }
 
     public IEnumerable<Status> Statuses { get; set; } = [];
 }

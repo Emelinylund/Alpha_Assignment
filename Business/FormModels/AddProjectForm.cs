@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Business.Dtos;
 using Microsoft.AspNetCore.Http;
 
 namespace Business.Models;
@@ -11,12 +10,12 @@ public class AddProjectForm
 
     [Display(Name = "Project Name", Prompt = "Enter project name")]
     [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
+    [Required(ErrorMessage = "Required")]
     public string ProjectName { get; set; } = null!;
 
-    [Display(Name = "Client Name", Prompt = "Enter client name")]
+    [Display(Name = "Client Name", Prompt = "Select a client")]
     [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
+    [Required(ErrorMessage = "Required")]
     public string ClientId { get; set; } = null!;
 
 
@@ -24,7 +23,7 @@ public class AddProjectForm
 
     [Display(Name = "Description", Prompt = "Enter description")]
     [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
+    [Required(ErrorMessage = "Required")]
     public string Description { get; set; } = null!;
 
     [Display(Name = "Start Date", Prompt = "Enter start date")]
@@ -41,8 +40,8 @@ public class AddProjectForm
 
     [Display(Name = "Status", Prompt = "Enter Status")]
     [DataType(DataType.Text)]
-    [Required(ErrorMessage = "Requierd")]
-    public int Status { get; set; } 
+    [Required(ErrorMessage = "Required")]
+    public int StatusId { get; set; } 
 
     public IEnumerable<Status> Statuses { get; set; } = [];
 
